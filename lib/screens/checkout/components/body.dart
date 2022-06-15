@@ -51,8 +51,8 @@ class _BodyState extends State<Body> {
     super.initState();
     totalPrice = ProductCartModel.carts.fold(
         0,
-            (previousValue, cart) =>
-        previousValue + (cart.quantity * cart.priceUSD));
+        (previousValue, cart) =>
+            previousValue + (cart.quantity * cart.priceUSD));
     shippingFee = totalPrice > 200 ? 0 : 2;
     totalPrice = totalPrice + shippingFee;
   }
@@ -64,21 +64,15 @@ class _BodyState extends State<Body> {
         width: double.infinity,
         child: Padding(
           padding:
-          EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
           child: SingleChildScrollView(
             child: FutureBuilder(
                 future: Utilities().getUserInfo(),
                 builder: (context, AsyncSnapshot<UserInforModel> snapshot) {
                   if (snapshot.connectionState != ConnectionState.done) {
                     return Container(
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height * 0.6,
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.6,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -177,11 +171,10 @@ class _BodyState extends State<Body> {
                             ShopDropDown(
                                 items: paymentMethods,
                                 onSelectItem: (dynamic newValue) {
-                                  selectedPaymentMethod =
-                                      PaymentMethods.values.firstWhere(
-                                              (e) => e.toString() ==
-                                              "PaymentMethods." +
-                                                  newValue.value);
+                                  selectedPaymentMethod = PaymentMethods.values
+                                      .firstWhere((e) =>
+                                          e.toString() ==
+                                          "PaymentMethods." + newValue.value);
                                 }),
                             SizedBox(
                               width: getProportionateScreenWidth(10),
@@ -201,7 +194,7 @@ class _BodyState extends State<Body> {
                             Text(
                               "\$$shippingFee",
                               style:
-                              TextStyle(fontSize: 18, color: Colors.black),
+                                  TextStyle(fontSize: 18, color: Colors.black),
                             ),
                             SizedBox(
                               width: getProportionateScreenWidth(10),
@@ -227,7 +220,7 @@ class _BodyState extends State<Body> {
                             Text(
                               "\$$totalPrice",
                               style:
-                              TextStyle(fontSize: 18, color: Colors.black),
+                                  TextStyle(fontSize: 18, color: Colors.black),
                             ),
                             SizedBox(
                               width: getProportionateScreenWidth(10),
@@ -235,44 +228,69 @@ class _BodyState extends State<Body> {
                           ],
                         ),
                         SizedBox(height: SizeConfig.screenHeight * 0.1),
-                        DefaultButton(
-                          text: "Order",
-                          press: () async {
-                            if(isCanSubmit){
-                              setState(() {
-                                isCanSubmit = false;
-                              });
+                        !isCanSubmit
+                            ? Column(
+                                children: [
+                                  SizedBox(
+                                      height: getProportionateScreenWidth(20)),
+                                  const CircularProgressIndicator(
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              )
+                            : DefaultButton(
+                                text: "Order",
+                                press: () async {
+                                  if (isCanSubmit) {
+                                    setState(() {
+                                      isCanSubmit = false;
+                                    });
 
-                              var productCheckOutModels = ProductCartModel.carts.map((e) => ProductCheckOutModel(id: e.id, quantity: e.quantity)).toList();
+                                    var productCheckOutModels = ProductCartModel
+                                        .carts
+                                        .map((e) => ProductCheckOutModel(
+                                            id: e.id, quantity: e.quantity))
+                                        .toList();
 
-                              try {
-                                var isCheckoutSuccessfully = await Utilities().checkoutCart(CheckOutCartRequestModel(
-                                    productCheckOutModels: productCheckOutModels,
-                                    address: address.text,
-                                    paymentMethod: selectedPaymentMethod.toString().replaceAll("PaymentMethods.", "")));
+                                    try {
+                                      var isCheckoutSuccessfully =
+                                          await Utilities().checkoutCart(
+                                              CheckOutCartRequestModel(
+                                                  productCheckOutModels:
+                                                      productCheckOutModels,
+                                                  address: address.text,
+                                                  paymentMethod:
+                                                      selectedPaymentMethod
+                                                          .toString()
+                                                          .replaceAll(
+                                                              "PaymentMethods.",
+                                                              "")));
 
-                                if(isCheckoutSuccessfully){
-                                  ProductCartModel.carts = [];
-                                  await SharedPreferenceHelper().setCarts();
-                                  ShopToast.SuccessfullyToast("Check out successfully!");
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      PaymentScreen.routeName,
-                                          (Route<dynamic> route) => false,
-                                      arguments: PaymentDetailsArguments(
-                                          paymentMethod: selectedPaymentMethod,
-                                          totalPrice: totalPrice));
-                                }
-                              }
-                              catch (msg){
-                                ShopToast.FailedToast("Check out failed!");
-                              }
-                              setState(() {
-                                isCanSubmit = true;
-                              });
-                            }
-                          },
-                        ),
+                                      if (isCheckoutSuccessfully) {
+                                        ProductCartModel.carts = [];
+                                        await SharedPreferenceHelper()
+                                            .setCarts();
+                                        ShopToast.SuccessfullyToast(
+                                            "Check out successfully!");
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            PaymentScreen.routeName,
+                                            (Route<dynamic> route) => false,
+                                            arguments: PaymentDetailsArguments(
+                                                paymentMethod:
+                                                    selectedPaymentMethod,
+                                                totalPrice: totalPrice));
+                                      }
+                                    } catch (msg) {
+                                      ShopToast.FailedToast(
+                                          "Check out failed!");
+                                    }
+                                    setState(() {
+                                      isCanSubmit = true;
+                                    });
+                                  }
+                                },
+                              ),
                       ],
                     );
                   }

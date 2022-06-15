@@ -25,6 +25,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
   var fullName = TextEditingController();
   var phoneNumber = TextEditingController();
   var address = TextEditingController();
+  var password = TextEditingController();
 
   final List<String?> errors = [];
 
@@ -67,6 +68,8 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
           buildPhoneNumberFormField(),
           SizedBox(height: getProportionateScreenHeight(20)),
           buildAddressFormField(),
+          SizedBox(height: getProportionateScreenHeight(20)),
+          buildPasswordFormField(),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(50)),
           DefaultButton(
@@ -115,6 +118,12 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
           phoneNumber.text = value as String;
         });
       },
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: kPhoneNumberNullError);
+        }
+        return null;
+      },
       validator: (value) {
         if (value!.isEmpty) {
           addError(error: kPhoneNumberNullError);
@@ -139,6 +148,12 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
         setState(() {
           fullName.text = value as String;
         });
+      },
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: kFullNameNullError);
+        }
+        return null;
       },
       validator: (value) {
         if (value!.isEmpty) {
@@ -165,6 +180,12 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
           address.text = value as String;
         });
       },
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: kAddressNullError);
+        }
+        return null;
+      },
       validator: (value) {
         if (value!.isEmpty) {
           addError(error: kAddressNullError);
@@ -178,6 +199,39 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon:
             CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
+      ),
+    );
+  }
+
+  TextFormField buildPasswordFormField() {
+    return TextFormField(
+      controller: password,
+      keyboardType: TextInputType.text,
+      obscureText: true,
+      onSaved: (value) {
+        setState(() {
+          password.text = value as String;
+        });
+      },
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: kPassNullError);
+        }
+        return null;
+      },
+      validator: (value) {
+        if (value!.isEmpty) {
+          addError(error: kPassNullError);
+          return "";
+        }
+        return null;
+      },
+      decoration: const InputDecoration(
+        labelText: "Password",
+        hintText: "Enter your Password",
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        suffixIcon:
+        CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
       ),
     );
   }
