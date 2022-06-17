@@ -3,6 +3,7 @@ import 'package:shop_online_mobile/components/custom_surfix_icon.dart';
 import 'package:shop_online_mobile/components/default_button.dart';
 import 'package:shop_online_mobile/components/form_error.dart';
 import 'package:shop_online_mobile/screens/complete_profile/complete_profile_screen.dart';
+import 'package:uiblock/uiblock.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/size_config.dart';
@@ -16,8 +17,6 @@ class SignUpForm extends StatefulWidget {
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
   RegisterModel registerModel = RegisterModel("", "", "", "", "");
-
-  bool isCanSubmit = true;
 
   String? confirm_password;
 
@@ -53,34 +52,35 @@ class _SignUpFormState extends State<SignUpForm> {
           buildConformPassFormField(),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(20)),
-          !isCanSubmit
-              ? Column(
-                  children: [
-                    SizedBox(height: getProportionateScreenWidth(20)),
-                    const CircularProgressIndicator(
-                      color: Colors.black,
-                    ),
-                  ],
-                )
-              : DefaultButton(
-                  text: "Continue",
-                  press: () {
-                    setState(() {
-                      isCanSubmit = false;
-                    });
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      // if all are valid then go to success screen
-                      Navigator.pushNamed(
-                          context, CompleteProfileScreen.routeName,
-                          arguments: CompleteProfileRegisterArguments(
-                              registerModel: registerModel));
-                    }
-                    setState(() {
-                      isCanSubmit = true;
-                    });
-                  },
-                ),
+          DefaultButton(
+            text: "Continue",
+            press: () {
+              UIBlock.block(
+                context,
+                customBuildBlockModalTransitions:
+                    (context, animation, secondaryAnimation, child) {
+                  return Column(
+                    children: [
+                      SizedBox(height: getProportionateScreenWidth(250)),
+                      const CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                // if all are valid then go to success screen
+                Navigator.pushNamed(context, CompleteProfileScreen.routeName,
+                    arguments: CompleteProfileRegisterArguments(
+                        registerModel: registerModel));
+              } else {
+                UIBlock.unblock(context);
+              }
+            },
+          ),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:shop_online_mobile/common/constants.dart';
 import 'package:shop_online_mobile/screens/home/home_screen.dart';
 import 'package:shop_online_mobile/screens/sign_in/sign_in_screen.dart';
 import 'package:shop_online_mobile/common/size_config.dart';
+import 'package:uiblock/uiblock.dart';
 
 // This is the best practice
 import '../../../helper/sharedPreferenceHelper.dart';
@@ -23,6 +24,7 @@ class _BodyState extends State<Body> {
       "image": "assets/icons/icon-title.png"
     },
   ];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -54,18 +56,26 @@ class _BodyState extends State<Body> {
                   children: <Widget>[
                     const Spacer(flex: 3),
                     DefaultButton(
-                      text: "Continue",
+                      text: "Let's shop",
                       press: () async {
-                        var tokenLogged = await SharedPreferenceHelper().getUserToken();
+                        var tokenLogged =
+                            await SharedPreferenceHelper().getUserToken();
 
                         var isLogged = tokenLogged.toString().isNotEmpty;
                         await SharedPreferenceHelper().getCarts();
-                        if(isLogged) {
-                          Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (Route<dynamic> route) => false);
-                          ShopToast.SuccessfullyToast("Login successfully");
-                        }
-                        else {
-                          Navigator.pushNamedAndRemoveUntil(context, SignInScreen.routeName, (Route<dynamic> route) => false);
+                        if (isLogged) {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              HomeScreen.routeName,
+                              (Route<dynamic> route) => false);
+                          Future.delayed(const Duration(milliseconds: 500), () {
+                            ShopToast.SuccessfullyToast("Login successfully");
+                          });
+                        } else {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              SignInScreen.routeName,
+                              (Route<dynamic> route) => false);
                         }
                       },
                     ),

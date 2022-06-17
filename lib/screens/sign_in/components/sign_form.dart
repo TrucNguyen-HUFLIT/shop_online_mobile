@@ -8,6 +8,7 @@ import 'package:shop_online_mobile/helper/utilities.dart';
 import 'package:shop_online_mobile/models/LoginModel.dart';
 import 'package:shop_online_mobile/screens/forgot_password/forgot_password_screen.dart';
 import 'package:shop_online_mobile/screens/home/home_screen.dart';
+import 'package:uiblock/uiblock.dart';
 
 import '../../../components/default_button.dart';
 import '../../../common/constants.dart';
@@ -23,7 +24,6 @@ class _SignFormState extends State<SignForm> {
   final List<String?> errors = [];
   String? email;
   String? password;
-  bool isCanSubmit = true;
 
   void addError({String? error}) {
     if (!errors.contains(error)) {
@@ -74,37 +74,42 @@ class _SignFormState extends State<SignForm> {
           ),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(20)),
-          !isCanSubmit
-              ? Column(
-            children: [
-              SizedBox(height: getProportionateScreenWidth(20)),
-              const CircularProgressIndicator(
-                color: Colors.black,
-              ),
-            ],
-          )
-              : DefaultButton(
+          DefaultButton(
             text: "Sign In",
             press: () async {
-              setState(() {
-                isCanSubmit = false;
-              });
+              UIBlock.block(
+                context,
+                customBuildBlockModalTransitions:
+                    (context, animation, secondaryAnimation, child) {
+                  return Column(
+                    children: [
+                      SizedBox(height: getProportionateScreenWidth(250)),
+                      const CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    ],
+                  );
+                },
+              );
+
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                try{
-                  var token = await Utilities().login(LoginModel(email!, password!));
+                try {
+                  var token =
+                      await Utilities().login(LoginModel(email!, password!));
                   SharedPreferenceHelper().setUserToken(userToken: token);
-                  Navigator.pushNamed(context, HomeScreen.routeName);
+                  Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (route) => false);
                   ShopToast.SuccessfullyToast("Login successfully");
-                }
-                catch (msg){
-                  ShopToast.FailedToast(msg.toString().replaceFirst("Exception: ", ""));
+                } catch (msg) {
+                  UIBlock.unblock(context);
+                  ShopToast.FailedToast(
+                      msg.toString().replaceFirst("Exception: ", ""));
                 }
                 KeyboardUtil.hideKeyboard(context);
+              }else{
+                UIBlock.unblock(context);
               }
-              setState(() {
-                isCanSubmit = true;
-              });
+
             },
           ),
         ],

@@ -5,6 +5,7 @@ import 'package:shop_online_mobile/components/form_error.dart';
 import 'package:shop_online_mobile/helper/utilities.dart';
 import 'package:shop_online_mobile/models/UserModel.dart';
 import 'package:shop_online_mobile/screens/complete_profile/complete_profile_screen.dart';
+import 'package:uiblock/uiblock.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/size_config.dart';
@@ -26,7 +27,6 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
   var phoneNumber = TextEditingController();
   var address = TextEditingController();
   var password = TextEditingController();
-  bool isCanSubmit = true;
 
   final List<String?> errors = [];
 
@@ -73,21 +73,24 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
           buildPasswordFormField(),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(50)),
-          !isCanSubmit
-              ? Column(
-            children: [
-              SizedBox(height: getProportionateScreenWidth(20)),
-              const CircularProgressIndicator(
-                color: Colors.black,
-              ),
-            ],
-          )
-              : DefaultButton(
+          DefaultButton(
             text: "Update",
             press: () async {
-              setState(() {
-                isCanSubmit = false;
-              });
+              UIBlock.block(
+                context,
+                customBuildBlockModalTransitions:
+                    (context, animation, secondaryAnimation, child) {
+                  return Column(
+                    children: [
+                      SizedBox(height: getProportionateScreenWidth(250)),
+                      const CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    ],
+                  );
+                },
+              );
+
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 try {
@@ -100,14 +103,15 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                           phoneNumber: phoneNumber.text,
                           avatar: widget.userInfor.avatar));
                   ShopToast.SuccessfullyToast("Update successfully");
+                  setState(() {
+                    password.text = "";
+                  });
                 } catch (msg) {
                   ShopToast.FailedToast(
                       msg.toString().replaceFirst("Exception: ", ""));
                 }
               }
-              setState(() {
-                isCanSubmit = true;
-              });
+              UIBlock.unblock(context);
             },
           ),
         ],
@@ -247,7 +251,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
         hintText: "Enter your Password",
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon:
-        CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
+            CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
     );
   }

@@ -7,6 +7,7 @@ import 'package:shop_online_mobile/common/size_config.dart';
 import 'package:shop_online_mobile/helper/keyboard.dart';
 import 'package:shop_online_mobile/models/ResetPasswordModel.dart';
 import 'package:shop_online_mobile/screens/sign_in/sign_in_screen.dart';
+import 'package:uiblock/uiblock.dart';
 
 import '../../../common/constants.dart';
 import '../../../helper/shopToast.dart';
@@ -55,7 +56,6 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
   List<String> errors = [];
   String? email;
   String? phone;
-  bool isCanSubmit = true;
 
   @override
   Widget build(BuildContext context) {
@@ -77,18 +77,20 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
                   errors.remove(kInvalidEmailError);
                 });
               }
-              return;
+              return null;
             },
             validator: (value) {
               if (value!.isEmpty && !errors.contains(kEmailNullError)) {
                 setState(() {
                   errors.add(kEmailNullError);
                 });
+                return "";
               }  if (!emailValidatorRegExp.hasMatch(value) &&
                   !errors.contains(kInvalidEmailError)) {
                 setState(() {
                   errors.add(kInvalidEmailError);
                 });
+                return "";
               }
               return null;
             },
@@ -116,6 +118,7 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
                 setState(() {
                   errors.add(kPhoneNumberNullError);
                 });
+                return "";
               }
               return null;
             },
@@ -129,21 +132,26 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
           SizedBox(height: getProportionateScreenHeight(30)),
           FormError(errors: errors),
           SizedBox(height: SizeConfig.screenHeight * 0.05),
-          !isCanSubmit
-              ? Column(
-            children: [
-              SizedBox(height: getProportionateScreenWidth(20)),
-              const CircularProgressIndicator(
-                color: Colors.black,
-              ),
-            ],
-          )
-              : DefaultButton(
+          DefaultButton(
             text: "Continue",
             press: () async {
-              setState(() {
-                isCanSubmit = false;
-              });
+              UIBlock.block(
+                context,
+                customBuildBlockModalTransitions: (context,
+                    animation, secondaryAnimation, child) {
+                  return Column(
+                    children: [
+                      SizedBox(
+                          height:
+                          getProportionateScreenWidth(250)),
+                      const CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    ],
+                  );
+                },
+              );
+
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 try{
@@ -152,13 +160,15 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
                   ShopToast.SuccessfullyToast("Reset password successfully!\nPlease check your mail");
                 }
                 catch (msg){
+                  UIBlock.unblock(context);
                   ShopToast.FailedToast(msg.toString().replaceFirst("Exception: ", ""));
                 }
                 KeyboardUtil.hideKeyboard(context);
+              }else {
+                UIBlock.unblock(context);
+
               }
-              setState(() {
-                isCanSubmit = true;
-              });
+
             },
           ),
           SizedBox(height: getProportionateScreenHeight(20)),

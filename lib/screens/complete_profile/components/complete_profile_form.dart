@@ -4,6 +4,7 @@ import 'package:shop_online_mobile/components/default_button.dart';
 import 'package:shop_online_mobile/components/form_error.dart';
 import 'package:shop_online_mobile/helper/utilities.dart';
 import 'package:shop_online_mobile/models/RegisterModel.dart';
+import 'package:uiblock/uiblock.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/size_config.dart';
@@ -23,7 +24,6 @@ class CompleteProfileForm extends StatefulWidget {
 class _CompleteProfileFormState extends State<CompleteProfileForm> {
   final _formKey = GlobalKey<FormState>();
   final List<String?> errors = [];
-  bool isCanSubmit = true;
 
   void addError({String? error}) {
     if (!errors.contains(error))
@@ -52,22 +52,27 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
           buildAddressFormField(),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(40)),
-          !isCanSubmit
-              ? Column(
-                  children: [
-                    SizedBox(height: getProportionateScreenWidth(20)),
-                    const CircularProgressIndicator(
-                      color: Colors.black,
-                    ),
-                  ],
-                )
-              : DefaultButton(
+          DefaultButton(
                   text: "Continue",
                   press: () async {
-                    if (_formKey.currentState!.validate() && isCanSubmit) {
-                      setState(() {
-                        isCanSubmit = false;
-                      });
+                    UIBlock.block(
+                      context,
+                      customBuildBlockModalTransitions: (context,
+                          animation, secondaryAnimation, child) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                                height:
+                                getProportionateScreenWidth(250)),
+                            const CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       try {
                         await Utilities().register(widget.registerModel);
@@ -76,14 +81,15 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
                         ShopToast.SuccessfullyToast(
                             "Register account successfully!");
                       } catch (msg) {
+                        UIBlock.unblock(context);
                         ShopToast.FailedToast(
                             msg.toString().replaceFirst("Exception: ", ""));
                       }
                       KeyboardUtil.hideKeyboard(context);
-                      setState(() {
-                        isCanSubmit = true;
-                      });
+                    }else{
+                      UIBlock.unblock(context);
                     }
+
                   },
                 ),
         ],

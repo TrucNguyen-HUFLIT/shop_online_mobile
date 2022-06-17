@@ -4,9 +4,28 @@ import 'package:shop_online_mobile/components/product_card.dart';
 import 'package:shop_online_mobile/helper/utilities.dart';
 import 'package:shop_online_mobile/models/ProductDetailModel.dart';
 
+import '../../home/home_screen.dart';
+
 class FavoriteProducts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    _showEmptyDiaLog() async {
+      await Future.delayed(Duration(milliseconds: 50));
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Product list is empty'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () =>
+                  Navigator.pushNamed(context, HomeScreen.routeName),
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    }
+
     return FutureBuilder(
         future: Utilities().getFavoriteProducts(),
         builder: (context, AsyncSnapshot<List<ProductDetailModel>> snapshot) {
@@ -25,7 +44,9 @@ class FavoriteProducts extends StatelessWidget {
               ),
             );
           } else {
-
+            if (snapshot.data!.isEmpty) {
+              _showEmptyDiaLog();
+            }
             return Padding(
               padding: const EdgeInsets.all(2.0),
               child: Column(
