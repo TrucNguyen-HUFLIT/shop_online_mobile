@@ -13,6 +13,7 @@ import '../../sign_in/sign_in_screen.dart';
 
 class CompleteProfileForm extends StatefulWidget {
   final RegisterModel registerModel;
+
   CompleteProfileForm({required this.registerModel});
 
   @override
@@ -51,29 +52,40 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
           buildAddressFormField(),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(40)),
-          DefaultButton(
-            text: "Continue",
-            press: () async {
-              if (_formKey.currentState!.validate() && isCanSubmit) {
-                setState(() {
-                  isCanSubmit = false;
-                });
-                _formKey.currentState!.save();
-                try{
-                  await Utilities().register(widget.registerModel);
-                  Navigator.pushNamedAndRemoveUntil(context, SignInScreen.routeName, (route) => false);
-                  ShopToast.SuccessfullyToast("Register account successfully!");
-                }
-                catch (msg){
-                  ShopToast.FailedToast(msg.toString().replaceFirst("Exception: ", ""));
-                }
-                KeyboardUtil.hideKeyboard(context);
-                setState(() {
-                  isCanSubmit = true;
-                });
-              }
-            },
-          ),
+          !isCanSubmit
+              ? Column(
+                  children: [
+                    SizedBox(height: getProportionateScreenWidth(20)),
+                    const CircularProgressIndicator(
+                      color: Colors.black,
+                    ),
+                  ],
+                )
+              : DefaultButton(
+                  text: "Continue",
+                  press: () async {
+                    if (_formKey.currentState!.validate() && isCanSubmit) {
+                      setState(() {
+                        isCanSubmit = false;
+                      });
+                      _formKey.currentState!.save();
+                      try {
+                        await Utilities().register(widget.registerModel);
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, SignInScreen.routeName, (route) => false);
+                        ShopToast.SuccessfullyToast(
+                            "Register account successfully!");
+                      } catch (msg) {
+                        ShopToast.FailedToast(
+                            msg.toString().replaceFirst("Exception: ", ""));
+                      }
+                      KeyboardUtil.hideKeyboard(context);
+                      setState(() {
+                        isCanSubmit = true;
+                      });
+                    }
+                  },
+                ),
         ],
       ),
     );
@@ -99,8 +111,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         labelText: "Phone",
         hintText: "Enter your phone",
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon:
-        CustomSurffixIcon(svgIcon: "assets/icons/Call.svg"),
+        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Call.svg"),
       ),
     );
   }

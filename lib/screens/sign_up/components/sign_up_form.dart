@@ -8,7 +8,6 @@ import '../../../common/constants.dart';
 import '../../../common/size_config.dart';
 import '../../../models/RegisterModel.dart';
 
-
 class SignUpForm extends StatefulWidget {
   @override
   _SignUpFormState createState() => _SignUpFormState();
@@ -16,7 +15,9 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
-  RegisterModel registerModel = RegisterModel("","","","","");
+  RegisterModel registerModel = RegisterModel("", "", "", "", "");
+
+  bool isCanSubmit = true;
 
   String? confirm_password;
 
@@ -52,16 +53,34 @@ class _SignUpFormState extends State<SignUpForm> {
           buildConformPassFormField(),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(20)),
-          DefaultButton(
-            text: "Continue",
-            press: () {
-              if (_formKey.currentState!.validate()) {
-                _formKey.currentState!.save();
-                // if all are valid then go to success screen
-                Navigator.pushNamed(context, CompleteProfileScreen.routeName, arguments: CompleteProfileRegisterArguments(registerModel: registerModel));
-              }
-            },
-          ),
+          !isCanSubmit
+              ? Column(
+                  children: [
+                    SizedBox(height: getProportionateScreenWidth(20)),
+                    const CircularProgressIndicator(
+                      color: Colors.black,
+                    ),
+                  ],
+                )
+              : DefaultButton(
+                  text: "Continue",
+                  press: () {
+                    setState(() {
+                      isCanSubmit = false;
+                    });
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      // if all are valid then go to success screen
+                      Navigator.pushNamed(
+                          context, CompleteProfileScreen.routeName,
+                          arguments: CompleteProfileRegisterArguments(
+                              registerModel: registerModel));
+                    }
+                    setState(() {
+                      isCanSubmit = true;
+                    });
+                  },
+                ),
         ],
       ),
     );
@@ -74,7 +93,8 @@ class _SignUpFormState extends State<SignUpForm> {
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kPassNullError);
-        } else if (value.isNotEmpty && registerModel.password == confirm_password) {
+        } else if (value.isNotEmpty &&
+            registerModel.password == confirm_password) {
           removeError(error: kMatchPassError);
         }
         confirm_password = value;

@@ -26,6 +26,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
   var phoneNumber = TextEditingController();
   var address = TextEditingController();
   var password = TextEditingController();
+  bool isCanSubmit = true;
 
   final List<String?> errors = [];
 
@@ -72,9 +73,21 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
           buildPasswordFormField(),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(50)),
-          DefaultButton(
+          !isCanSubmit
+              ? Column(
+            children: [
+              SizedBox(height: getProportionateScreenWidth(20)),
+              const CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            ],
+          )
+              : DefaultButton(
             text: "Update",
             press: () async {
+              setState(() {
+                isCanSubmit = false;
+              });
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 try {
@@ -92,6 +105,9 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                       msg.toString().replaceFirst("Exception: ", ""));
                 }
               }
+              setState(() {
+                isCanSubmit = true;
+              });
             },
           ),
         ],

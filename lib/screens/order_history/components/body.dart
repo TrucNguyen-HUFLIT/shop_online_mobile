@@ -21,7 +21,7 @@ class _BodyState extends State<Body> {
         future: Utilities().getHistoryOrder(),
         builder: (context, AsyncSnapshot<List<OrderModel>> snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return Container(
+            return SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.6,
               child: Column(
@@ -42,7 +42,7 @@ class _BodyState extends State<Body> {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: EdgeInsets.only(bottom: 15),
+                    padding: const EdgeInsets.only(bottom: 5),
                     child: OrderCard(order: snapshot.data![index]),
                   );
                 },

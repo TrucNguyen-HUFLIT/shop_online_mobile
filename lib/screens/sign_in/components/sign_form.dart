@@ -23,6 +23,7 @@ class _SignFormState extends State<SignForm> {
   final List<String?> errors = [];
   String? email;
   String? password;
+  bool isCanSubmit = true;
 
   void addError({String? error}) {
     if (!errors.contains(error)) {
@@ -73,9 +74,21 @@ class _SignFormState extends State<SignForm> {
           ),
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(20)),
-          DefaultButton(
+          !isCanSubmit
+              ? Column(
+            children: [
+              SizedBox(height: getProportionateScreenWidth(20)),
+              const CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            ],
+          )
+              : DefaultButton(
             text: "Sign In",
             press: () async {
+              setState(() {
+                isCanSubmit = false;
+              });
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 try{
@@ -89,6 +102,9 @@ class _SignFormState extends State<SignForm> {
                 }
                 KeyboardUtil.hideKeyboard(context);
               }
+              setState(() {
+                isCanSubmit = true;
+              });
             },
           ),
         ],

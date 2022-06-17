@@ -55,6 +55,7 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
   List<String> errors = [];
   String? email;
   String? phone;
+  bool isCanSubmit = true;
 
   @override
   Widget build(BuildContext context) {
@@ -128,9 +129,21 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
           SizedBox(height: getProportionateScreenHeight(30)),
           FormError(errors: errors),
           SizedBox(height: SizeConfig.screenHeight * 0.05),
-          DefaultButton(
+          !isCanSubmit
+              ? Column(
+            children: [
+              SizedBox(height: getProportionateScreenWidth(20)),
+              const CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            ],
+          )
+              : DefaultButton(
             text: "Continue",
             press: () async {
+              setState(() {
+                isCanSubmit = false;
+              });
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 try{
@@ -143,6 +156,9 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
                 }
                 KeyboardUtil.hideKeyboard(context);
               }
+              setState(() {
+                isCanSubmit = true;
+              });
             },
           ),
           SizedBox(height: getProportionateScreenHeight(20)),
