@@ -96,7 +96,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                       : inActiveIconColor,
                 ),
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(context, HomeScreen.routeName, (Route<dynamic> route) => false);
+                  Navigator.pushNamed(context, HomeScreen.routeName);
                 },
               ),
               IconButton(
@@ -108,7 +108,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 ),
                 onPressed: () {
                   if(currentRoute != FavoriteScreen.routeName) {
-                    Navigator.pushNamedAndRemoveUntil(context, FavoriteScreen.routeName, (Route<dynamic> route) => false);
+                    Navigator.pushNamed(context, FavoriteScreen.routeName);
                   }
                 },
               ),
@@ -132,7 +132,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 ),
                 onPressed: () {
                   if(currentRoute != ProfileScreen.routeName) {
-                    Navigator.pushNamedAndRemoveUntil(context, ProfileScreen.routeName, (Route<dynamic> route) => false);
+                    Navigator.pushNamed(context, ProfileScreen.routeName);
                   }
                 },
               ),

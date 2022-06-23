@@ -6,6 +6,7 @@ class OrderModel {
   late bool isPaid;
   late String payment;
   late int totalPrice;
+  late int extraFeeUSD;
 
   OrderModel({
     required this.id,
@@ -14,6 +15,7 @@ class OrderModel {
     required this.isPaid,
     required this.payment,
     required this.totalPrice,
+    required this.extraFeeUSD,
   });
 
   OrderModel.fromJson(Map<String, dynamic> json){
@@ -23,6 +25,7 @@ class OrderModel {
     isPaid = json['isPaid'];
     payment = json['payment'];
     totalPrice = json['totalPrice'];
+    extraFeeUSD = json['extraFeeUSD'];
   }
 
   Map<String, dynamic> toJson() {
@@ -33,6 +36,7 @@ class OrderModel {
     data['isPaid'] = isPaid;
     data['payment'] = payment;
     data['totalPrice'] = totalPrice;
+    data['extraFeeUSD'] = extraFeeUSD;
 
     return data;
   }
