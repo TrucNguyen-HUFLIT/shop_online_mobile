@@ -7,9 +7,14 @@ class CheckOutScreen extends StatelessWidget {
   static String routeName = "/check_out";
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(context),
-      body: Body(),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        appBar: buildAppBar(context),
+        body: Body(),
+      ),
     );
   }
 

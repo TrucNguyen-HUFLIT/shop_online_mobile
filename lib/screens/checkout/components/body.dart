@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_online_mobile/common/constants.dart';
 import 'package:shop_online_mobile/common/size_config.dart';
 import 'package:shop_online_mobile/helper/sharedPreferenceHelper.dart';
 import 'package:shop_online_mobile/helper/shopDropDown.dart';
@@ -102,9 +103,15 @@ class _BodyState extends State<Body> {
                               address.text = value as String;
                             });
                           },
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              removeError(error: kAddressNullError);
+                            }
+                            return null;
+                          },
                           validator: (value) {
                             if (value!.isEmpty) {
-                              addError(error: "Please enter your address");
+                              addError(error: kAddressNullError);
                               return "";
                             }
                             return null;
@@ -228,64 +235,100 @@ class _BodyState extends State<Body> {
                         ),
                         SizedBox(height: SizeConfig.screenHeight * 0.1),
                         DefaultButton(
-                          text: "Order",
-                          press: () async {
-                            UIBlock.block(
-                              context,
-                              customBuildBlockModalTransitions: (context,
-                                  animation, secondaryAnimation, child) {
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                        height:
-                                            getProportionateScreenWidth(250)),
-                                    const CircularProgressIndicator(
-                                      color: Colors.black,
+                            text: "Order",
+                            press: () async {
+                              showDialog<String>(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  title: const Text('Do you want to order?'),
+                                  content: address.text.isEmpty ? Text( "The address is empty. The order will ship to your address default." ,style: TextStyle(color: Colors.amber),) : null,
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () async {
+                                        UIBlock.block(
+                                          context,
+                                          customBuildBlockModalTransitions:
+                                              (context, animation,
+                                                  secondaryAnimation, child) {
+                                            return WillPopScope(
+                                              onWillPop: () async {
+                                                return false;
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  SizedBox(
+                                                      height:
+                                                          getProportionateScreenWidth(
+                                                              250)),
+                                                  const CircularProgressIndicator(
+                                                    color: Colors.black,
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+
+                                        var productCheckOutModels =
+                                            ProductCartModel
+                                                .carts
+                                                .map((e) =>
+                                                    ProductCheckOutModel(
+                                                        id: e.id,
+                                                        quantity: e.quantity))
+                                                .toList();
+
+                                        try {
+                                          var isCheckoutSuccessfully =
+                                              await Utilities().checkoutCart(
+                                                  CheckOutCartRequestModel(
+                                                      productCheckOutModels:
+                                                          productCheckOutModels,
+                                                      address: address.text,
+                                                      paymentMethod:
+                                                          selectedPaymentMethod
+                                                              .toString()
+                                                              .replaceAll(
+                                                                  "PaymentMethods.",
+                                                                  "")));
+
+                                          if (isCheckoutSuccessfully) {
+                                            ProductCartModel.carts = [];
+                                            await SharedPreferenceHelper()
+                                                .setCarts();
+                                            ShopToast.SuccessfullyToast(
+                                                "Check out successfully!");
+                                            Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                PaymentScreen.routeName,
+                                                (Route<dynamic> route) => false,
+                                                arguments:
+                                                    PaymentDetailsArguments(
+                                                        paymentMethod:
+                                                            selectedPaymentMethod,
+                                                        totalPrice:
+                                                            totalPrice));
+                                          } else {
+                                            UIBlock.unblock(context);
+                                          }
+                                        } catch (msg) {
+                                          UIBlock.unblock(context);
+
+                                          ShopToast.FailedToast(
+                                              "Check out failed!");
+                                        }
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, 'Cancel'),
+                                      child: const Text('Cancel'),
                                     ),
                                   ],
-                                );
-                              },
-                            );
-
-                            var productCheckOutModels = ProductCartModel.carts
-                                .map((e) => ProductCheckOutModel(
-                                    id: e.id, quantity: e.quantity))
-                                .toList();
-
-                            try {
-                              var isCheckoutSuccessfully = await Utilities()
-                                  .checkoutCart(CheckOutCartRequestModel(
-                                      productCheckOutModels:
-                                          productCheckOutModels,
-                                      address: address.text,
-                                      paymentMethod: selectedPaymentMethod
-                                          .toString()
-                                          .replaceAll("PaymentMethods.", "")));
-
-                              if (isCheckoutSuccessfully) {
-                                ProductCartModel.carts = [];
-                                await SharedPreferenceHelper().setCarts();
-                                ShopToast.SuccessfullyToast(
-                                    "Check out successfully!");
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    PaymentScreen.routeName,
-                                    (Route<dynamic> route) => false,
-                                    arguments: PaymentDetailsArguments(
-                                        paymentMethod: selectedPaymentMethod,
-                                        totalPrice: totalPrice));
-                              } else {
-                                UIBlock.unblock(context);
-
-                              }
-                            } catch (msg) {
-                              UIBlock.unblock(context);
-
-                              ShopToast.FailedToast("Check out failed!");
-                            }
-
-                          },
-                        ),
+                                ),
+                              );
+                            }),
                       ],
                     );
                   }

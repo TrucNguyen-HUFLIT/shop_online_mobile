@@ -38,3 +38,4 @@ final Map<String, WidgetBuilder> routes = {
 };
 
 String currentRoute = HomeScreen.routeName;
+String previousRoute = HomeScreen.routeName;

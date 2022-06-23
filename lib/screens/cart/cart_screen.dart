@@ -32,22 +32,27 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: buildAppBar(context),
-      body: Body(remove: (index) {
-        if (ProductCartModel.carts.isNotEmpty) {
-          ProductCartModel.carts.removeAt(index);
-          setState(() {
-            totalPrice = ProductCartModel.carts.fold(0, (previousValue, cart) => previousValue + (cart.quantity * cart.priceUSD));
-          });
-          sharedPrefLocator.setCarts();
-          ShopToast.SuccessfullyToast("Remove from carts successfully");
-        }
-        else {
-          ShopToast.FailedToast("Carts are empty");
-        }
-      },),
-      bottomNavigationBar: CheckoutCard(totalPrice: totalPrice,),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        appBar: buildAppBar(context),
+        body: Body(remove: (index) {
+          if (ProductCartModel.carts.isNotEmpty) {
+            ProductCartModel.carts.removeAt(index);
+            setState(() {
+              totalPrice = ProductCartModel.carts.fold(0, (previousValue, cart) => previousValue + (cart.quantity * cart.priceUSD));
+            });
+            sharedPrefLocator.setCarts();
+            ShopToast.SuccessfullyToast("Remove from carts successfully");
+          }
+          else {
+            ShopToast.FailedToast("Carts are empty");
+          }
+        },),
+        bottomNavigationBar: CheckoutCard(totalPrice: totalPrice,),
+      ),
     );
   }
 
@@ -56,7 +61,7 @@ class _CartScreenState extends State<CartScreen> {
       leading: IconButton(
         icon: Image.asset("icon-arrow-down.png", width: getProportionateScreenWidth(15),),
         onPressed: () =>
-            Navigator.pushNamed(context, currentRoute)
+            Navigator.pushNamed(context, currentRoute != CartScreen.routeName ? currentRoute : previousRoute)
       ),
       title: Container(
         transform: Matrix4.translationValues(70.0, 0.0, 0.0),

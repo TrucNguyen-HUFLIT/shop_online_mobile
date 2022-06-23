@@ -7,6 +7,7 @@ class ProductCartModel {
   late int priceVND;
   late int quantity;
   late int size;
+  late int productDetailId;
 
   static List<ProductCartModel> carts = [];
 
@@ -18,6 +19,7 @@ class ProductCartModel {
     required this.image,
     required this.quantity,
     required this.size,
+    required this.productDetailId,
   });
 
   ProductCartModel.fromJson(Map<String, dynamic> json){
@@ -28,6 +30,7 @@ class ProductCartModel {
     image = json['image'];
     quantity = json['quantity'];
     size = json['size'];
+    productDetailId = json['productDetailId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -39,6 +42,7 @@ class ProductCartModel {
     data['quantity'] = quantity;
     data['image'] = image;
     data['size'] = size;
+    data['productDetailId'] = productDetailId;
 
     return data;
   }

@@ -40,10 +40,6 @@ class Body extends StatelessWidget {
                     title: const Text('Do you want to logout?'),
                     actions: <Widget>[
                       TextButton(
-                        onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
                         onPressed: () async {
                           await SharedPreferenceHelper()
                               .setUserToken(userToken: '');
@@ -53,6 +49,10 @@ class Body extends StatelessWidget {
                               (Route<dynamic> route) => false);
                         },
                         child: const Text('OK'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text('Cancel'),
                       ),
                     ],
                   ),

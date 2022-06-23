@@ -13,34 +13,39 @@ class DetailsScreen extends StatelessWidget {
     final ProductDetailsArguments agrs =
         ModalRoute.of(context)!.settings.arguments as ProductDetailsArguments;
 
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: Color(0xFFF5F6F9),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(AppBar().preferredSize.height),
-        child: CustomAppBar(),
-      ),
-      body: FutureBuilder(
-        future: Utilities().getProductByIdDetail(agrs.id),
-        builder: (context, AsyncSnapshot<ProductModel?> snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  CircularProgressIndicator(
-                    color: Colors.black,
-                  )
-                ],
-              ),
-            );
-          } else {
-            return Body(product: snapshot.data!);
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        extendBody: true,
+        backgroundColor: Color(0xFFF5F6F9),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(AppBar().preferredSize.height),
+          child: CustomAppBar(),
+        ),
+        body: FutureBuilder(
+          future: Utilities().getProductByIdDetail(agrs.id),
+          builder: (context, AsyncSnapshot<ProductModel?> snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    CircularProgressIndicator(
+                      color: Colors.black,
+                    )
+                  ],
+                ),
+              );
+            } else {
+              return Body(product: snapshot.data!);
+            }
           }
-        }
+        ),
       ),
     );
   }

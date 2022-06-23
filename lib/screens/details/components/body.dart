@@ -36,6 +36,7 @@ class _BodyState extends State<Body> {
     } else {
       ProductCartModel.carts.add(ProductCartModel(
           id: productSizeSelected.id,
+          productDetailId: product.id,
           name: product.name,
           priceUSD: product.priceUSD,
           priceVND: product.priceVND,

@@ -42,6 +42,7 @@ class SharedPreferenceHelper {
       if (cartsJson!.isNotEmpty) {
         ProductCartModel.carts = (jsonDecode(cartsJson) as List)
             .map((e) => ProductCartModel(
+                productDetailId: e["productDetailId"],
                 id: e["id"],
                 name: e["name"],
                 priceUSD: e["priceUSD"],

@@ -19,7 +19,7 @@ class OrderCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text("Order Id: ${order.id}", style: TextStyle(fontWeight: FontWeight.bold),),
+            Text("Order Id: ${order.id}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16,),),
             SizedBox(width: getProportionateScreenWidth(85),),
             Expanded(
               child: Text(
@@ -47,7 +47,7 @@ class OrderCard extends StatelessWidget {
         const SizedBox(height: 10,),
         Row(
           children: [
-            Expanded(child: Text(DateFormat.yMMMd().format(order.orderDay),
+            Expanded(child: Text(DateFormat.yMMMd().add_Hm().format(order.orderDay),
               style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
             )),
             const SizedBox(width: 15,),
