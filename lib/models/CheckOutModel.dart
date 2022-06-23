@@ -14,11 +14,13 @@ class CheckOutCartRequestModel {
   late List<ProductCheckOutModel> productCheckOutModels;
   late String address;
   late String paymentMethod;
+  late bool isPaid;
 
   CheckOutCartRequestModel({
     required this.productCheckOutModels,
     required this.address,
     required this.paymentMethod,
+    required this.isPaid,
   });
 
   CheckOutCartRequestModel.fromJson(Map<String, dynamic> json) {
@@ -27,12 +29,14 @@ class CheckOutCartRequestModel {
         .toList();
     address = json['address'];
     paymentMethod = json['paymentMethod'];
+    isPaid = json['isPaid'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['productCheckOutModels'] = productCheckOutModels;
     data['address'] = address;
+    data['isPaid'] = isPaid;
 
     switch (paymentMethod) {
       case "Momo":
