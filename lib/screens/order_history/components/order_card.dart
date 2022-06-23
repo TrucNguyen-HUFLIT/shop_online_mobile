@@ -26,7 +26,7 @@ class OrderCard extends StatelessWidget {
                 order.payment == "BankTransfer"
                     ? "Banking"
                     : order.payment == "EWallet"
-                    ? "Momo"
+                    ? "E-wallet"
                     : "Ship Cod",
                 style: const TextStyle(color: Colors.orange, fontSize: 16, fontWeight: FontWeight.bold),
               ),
