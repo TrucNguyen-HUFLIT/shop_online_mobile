@@ -101,6 +101,7 @@ class _UpdateProfileFormState extends State<UpdateProfileForm> {
                           address: address.text,
                           fullName: fullName.text,
                           phoneNumber: phoneNumber.text,
+                          password: password.text,
                           avatar: widget.userInfor.avatar));
                   ShopToast.SuccessfullyToast("Update successfully");
                   setState(() {

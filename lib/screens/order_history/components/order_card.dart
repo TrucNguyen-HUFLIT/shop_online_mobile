@@ -56,7 +56,7 @@ class OrderCard extends StatelessWidget {
                 style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-            Text('\$${order.totalPrice}', style: const TextStyle(fontSize: 16, color: Colors.orange, fontWeight: FontWeight.bold)),
+            Text('\$${order.totalPrice + order.extraFeeUSD}', style: const TextStyle(fontSize: 16, color: Colors.orange, fontWeight: FontWeight.bold)),
           ],
         ),
         const Divider(

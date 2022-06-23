@@ -31,13 +31,33 @@ class Body extends StatelessWidget {
                 Navigator.pushNamed(context, OrderHistoryScreen.routeName),
           ),
           ProfileMenu(
-            text: "Log Out",
-            icon: "assets/icons/Log out.svg",
-            press: () async {
-              await SharedPreferenceHelper().setUserToken(userToken: '');
-              Navigator.pushNamedAndRemoveUntil(context, SignInScreen.routeName, (Route<dynamic> route) => false);
-            }
-          ),
+              text: "Log Out",
+              icon: "assets/icons/Log out.svg",
+              press: () {
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Do you want to logout?'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await SharedPreferenceHelper()
+                              .setUserToken(userToken: '');
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              SignInScreen.routeName,
+                              (Route<dynamic> route) => false);
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              }),
         ],
       ),
     );

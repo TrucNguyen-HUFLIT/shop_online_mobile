@@ -7,6 +7,7 @@ class UserInforModel {
   late String address;
   late String phoneNumber;
   late String avatar;
+  late String password;
 
   UserInforModel(
       {required this.id,
@@ -14,6 +15,7 @@ class UserInforModel {
       required this.address,
       required this.fullName,
       required this.phoneNumber,
+      required this.password,
       required this.avatar});
 
   UserInforModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class UserInforModel {
     fullName = json['fullName'];
     address = json['address'];
     phoneNumber = json['phoneNumber'];
+    password = json['password'];
     avatar = Utilities.url + json['avatar'];
   }
 
@@ -32,6 +35,7 @@ class UserInforModel {
     data['fullName'] = fullName;
     data['address'] = address;
     data['phoneNumber'] = phoneNumber;
+    data['password'] = password;
     data['avatar'] = avatar.replaceFirst(Utilities.url, "");
 
     return data;
