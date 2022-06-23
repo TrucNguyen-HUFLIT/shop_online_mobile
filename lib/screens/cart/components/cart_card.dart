@@ -19,7 +19,7 @@ class CartCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        previousRoute = currentRoute;
+        previousRoute = currentRoute != CartScreen.routeName ? currentRoute : previousRoute;
         currentRoute = CartScreen.routeName;
         Navigator.pushNamed(
           context,
